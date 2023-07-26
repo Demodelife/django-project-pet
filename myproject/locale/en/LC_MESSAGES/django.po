@@ -1,0 +1,77 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-24 23:47+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\accounts\views.py:72
+msgid "Hello World"
+msgstr "Hello World"
+
+#: .\accounts\views.py:78
+#, python-brace-format
+msgid "one product"
+msgid_plural "{count} products"
+msgstr[0] "One product"
+msgstr[1] "{count} products"
+
+#: .\shopapp\templates\shopapp\base.html:21
+msgid "Now"
+msgstr "Now"
+
+#: .\shopapp\templates\shopapp\base.html:22
+msgid "Today is"
+msgstr "Today is"
+
+#: .\shopapp\templates\shopapp\product-list.html:5
+#: .\shopapp\templates\shopapp\product-list.html:9
+msgid "Products"
+msgstr "Products"
+
+#: .\shopapp\templates\shopapp\product-list.html:12
+#, python-format
+msgid ""
+"\n"
+"            There is only one product\n"
+"            "
+msgid_plural ""
+"\n"
+"            There are %(products_count)s products\n"
+"        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\shopapp\templates\shopapp\product-list.html:21
+msgctxt "Product Name"
+msgid "Name"
+msgstr "Name"
+
+#: .\shopapp\templates\shopapp\product-list.html:24
+msgid "Price"
+msgstr "Price"
+
+#: .\shopapp\templates\shopapp\product-list.html:25
+msgid "Description"
+msgstr "Description"
+
+#: .\shopapp\templates\shopapp\product-list.html:30
+msgid "Not products yet"
+msgstr "Not products yet"
+
+#: .\shopapp\templates\shopapp\product-list.html:34
+msgid "Create product"
+msgstr "Create product"

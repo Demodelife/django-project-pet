@@ -1,0 +1,22 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+    About Me
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+
+        <h1>My Profile:</h1>
+        <div>
+            <p>Name: {{ user.username }}</p>
+            <p>First Name: {{ user.first_name }}</p>
+            <p>Last Name: {{ user.last_name }}</p>
+            <p>Email: {{ user.email }}</p>
+            <p>Biography: {{ user.profile.bio }}</p>
+        </div>
+    {% else %}
+        <h1>User is Anonymous</h1>
+    {% endif %}
+
+{% endblock %}

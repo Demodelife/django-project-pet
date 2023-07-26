@@ -1,0 +1,35 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}
+    Shop Index
+{% endblock %}
+
+{% block body %}
+    <h1>Shop Index</h1>
+    <h3>Hello, {% firstof request.user.first_name request.user.username %}!</h3>
+    <h4>Here all the best our products:</h4>
+    {% if products %}
+        {% for name, price in products %}
+            <ul>
+                <li> {{ name }} for ${{ price }}</li>
+            </ul>
+        {% endfor %}
+
+    {% else %}
+        Not products yet
+    {% endif %}
+
+    <div>
+        <strong>
+            You have {{ items }} item{{ items|pluralize }}
+            <br>
+            You have {{ items }} class{{ items|pluralize:'es'}}
+            <br>
+            You have {{ items }} cherr{{ items|pluralize:'y,ies'}}
+        </strong>
+    </div>
+
+    <div>
+        {% lorem 5 p random %}
+    </div>
+{% endblock %}

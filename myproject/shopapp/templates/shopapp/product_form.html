@@ -1,0 +1,36 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}
+    Create product
+{% endblock %}
+
+{% block body %}
+    <h1>Create a new product:</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create</button>
+    </form>
+
+    {% if request.POST %}
+        <h1>Previous data:</h1>
+
+        <table>
+            <tr>
+                <td>Name:</td>
+                <td>{{ request.POST.name }}</td>
+            </tr>
+            <tr>
+                <td>Description:</td>
+                <td>{{ request.POST.description|linebreaks }}</td>
+            </tr>
+            <tr>
+                <td>Price:</td>
+                <td>{{ request.POST.price }}</td>
+            </tr>
+        </table>
+
+    {% endif %}
+
+
+{% endblock %}
