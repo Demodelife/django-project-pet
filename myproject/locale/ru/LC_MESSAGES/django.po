@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-24 23:47+0500\n"
+"POT-Creation-Date: 2023-07-26 15:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,14 +16,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: .\accounts\views.py:72
+#: accounts/views.py:72
 msgid "Hello World"
 msgstr "Привет Мир"
 
-#: .\accounts\views.py:78
+#: accounts/views.py:78
 #, python-brace-format
 msgid "one product"
 msgid_plural "{count} products"
@@ -31,20 +31,20 @@ msgstr[0] "{count} товар"
 msgstr[1] "{count} товара"
 msgstr[2] "{count} товаров"
 
-#: .\shopapp\templates\shopapp\base.html:21
+#: shopapp/templates/shopapp/base.html:21
 msgid "Now"
 msgstr "Сейчас"
 
-#: .\shopapp\templates\shopapp\base.html:22
+#: shopapp/templates/shopapp/base.html:22
 msgid "Today is"
 msgstr "Сегодня"
 
-#: .\shopapp\templates\shopapp\product-list.html:5
-#: .\shopapp\templates\shopapp\product-list.html:9
+#: shopapp/templates/shopapp/product-list.html:5
+#: shopapp/templates/shopapp/product-list.html:9
 msgid "Products"
 msgstr "Товары"
 
-#: .\shopapp\templates\shopapp\product-list.html:12
+#: shopapp/templates/shopapp/product-list.html:12
 #, python-format
 msgid ""
 "\n"
@@ -67,23 +67,23 @@ msgstr[2] ""
 "            Доступны %(products_count)s товаров\n"
 "        "
 
-#: .\shopapp\templates\shopapp\product-list.html:21
+#: shopapp/templates/shopapp/product-list.html:22
 msgctxt "Product Name"
 msgid "Name"
 msgstr "Название"
 
-#: .\shopapp\templates\shopapp\product-list.html:24
+#: shopapp/templates/shopapp/product-list.html:25
 msgid "Price"
 msgstr "Цена"
 
-#: .\shopapp\templates\shopapp\product-list.html:25
+#: shopapp/templates/shopapp/product-list.html:26
 msgid "Description"
 msgstr "Описание"
 
-#: .\shopapp\templates\shopapp\product-list.html:30
+#: shopapp/templates/shopapp/product-list.html:31
 msgid "Not products yet"
 msgstr "Пока нет товаров"
 
-#: .\shopapp\templates\shopapp\product-list.html:34
+#: shopapp/templates/shopapp/product-list.html:35
 msgid "Create product"
 msgstr "Создать товар"
