@@ -1,12 +1,15 @@
+import logging
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from shopapp.forms import ProductForm, GroupForm
 from shopapp.models import Product, Order, ProductImage
+
+logger = logging.getLogger(__name__)
 
 
 # def shop_index(request: HttpRequest) -> HttpResponse:
@@ -24,15 +27,16 @@ class ShopIndexView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
-                'products': [
-                    ('Apple', 150),
-                    ('Pear', 200),
-                    ('Mango', 500),
-                ],
-                'request': request,
-                'items': 1,
-            }
-
+            'products': [
+                ('Apple', 150),
+                ('Pear', 200),
+                ('Mango', 500),
+            ],
+            'request': request,
+            'items': 1,
+        }
+        logger.debug('Products for shop index: {}'.format(context['products']))
+        logger.info('Rendering shop index')
         return render(request, 'shopapp/index.html', context=context)
 
 
@@ -42,7 +46,7 @@ class GroupListView(View):
         context = {
             'form': GroupForm(),
             'groups': groups,
-            }
+        }
         return render(request, 'shopapp/group-list.html', context=context)
 
     def post(self, request: HttpRequest) -> HttpResponse:
@@ -169,12 +173,27 @@ class ProductDeleteView(UserPassesTestMixin, DeleteView):
 class ProductArchiveView(ProductDeleteView):
     template_name_suffix = '_confirm_archive'
 
-
     def form_valid(self, form):
         success_url = self.get_success_url()
         self.object.archived = True
         self.object.save()
         return HttpResponseRedirect(success_url)
+
+
+class ProductDataExportView(View):
+    def get(self, request: HttpRequest) -> JsonResponse:
+        products = Product.objects.order_by('pk').all()
+        products_data = [
+            {
+                'pk': product.pk,
+                'name': product.name,
+                'price': product.price,
+                'archived': product.archived
+            }
+            for product in products
+        ]
+
+        return JsonResponse({'products': products_data})
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -194,5 +213,3 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
     model = Order
     fields = 'user', 'delivery_address', 'promocode'
     success_url = reverse_lazy('shopapp:order-list')
-
-
