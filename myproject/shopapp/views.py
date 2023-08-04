@@ -1,6 +1,7 @@
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
+from django.contrib.syndication.views import Feed
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -213,3 +214,22 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
     model = Order
     fields = 'user', 'delivery_address', 'promocode'
     success_url = reverse_lazy('shopapp:order-list')
+
+
+class ProductsLatestFeed(Feed):
+    title = 'Shop products (latest).'
+    description = 'Updates on changes and additions products.'
+    link = reverse_lazy('shopapp:product-list')
+
+    def items(self):
+        return (
+            Product.objects
+            .filter(archived=False)
+            .order_by('pk')
+        )
+
+    def item_title(self, item: Product):
+        return item.name
+
+    def item_description(self, item: Product):
+        return item.description[:200]

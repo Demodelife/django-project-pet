@@ -1,8 +1,12 @@
 from django.contrib import admin
 from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render, redirect
+from django.urls import path
 
 from shopapp.admin_mixins import ExportAsCSVMixin
+from shopapp.common import save_csv_products, save_csv_orders
+from shopapp.forms import CSVImportForm
 from shopapp.models import Product, Order, ProductImage
 
 
@@ -57,6 +61,35 @@ class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
             'description': 'Field for a soft delete',
         })
     ]
+    change_list_template = 'shopapp/products_changelist.html'
+
+    def import_csv(self, request: HttpRequest) -> HttpResponse:
+        if request.method == 'GET':
+            form = CSVImportForm()
+            context = {
+                'form': form,
+            }
+            return render(request, 'admin/csv_form.html', context=context)
+        form = CSVImportForm(request.POST, request.FILES)
+        if not form.is_valid():
+            context = {
+                'form': form,
+            }
+            return render(request, 'admin/csv_form.html', context=context, status=400)
+
+        save_csv_products(
+            file=form.files['csv_file'].file,
+            encoding=request.encoding
+        )
+        self.message_user(request, 'Products from CSV was imported.')
+        return redirect('..')
+
+    def get_urls(self):
+        urls = super().get_urls()
+        new_urls = [
+            path('import-products-csv/', self.import_csv, name='import-products-csv')
+        ]
+        return new_urls + urls
 
 
 @admin.register(Order)
@@ -67,4 +100,31 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = 'id', 'delivery_address', 'user'
     list_display_links = 'id', 'delivery_address'
     search_fields = 'delivery_address',
+    change_list_template = 'shopapp/orders_changelist.html'
 
+    def import_csv(self, request: HttpRequest) -> HttpResponse:
+        if request.method == 'GET':
+            form = CSVImportForm()
+            context = {
+                'form': form,
+            }
+            return render(request, 'admin/csv_form.html', context=context)
+        form = CSVImportForm(request.POST, request.FILES)
+        if not form.is_valid():
+            context = {
+                'form': form,
+            }
+            return render(request, 'admin/csv_form.html', context=context, status=400)
+        save_csv_orders(
+            file=form.files['csv_file'].file,
+            encoding=request.encoding
+        )
+        self.message_user(request, 'Orders from CSV was imported.')
+        return redirect('..')
+
+    def get_urls(self):
+        urls = super().get_urls()
+        new_urls = [
+            path('import-orders-csv/', self.import_csv, name='import-orders-csv')
+        ]
+        return new_urls + urls

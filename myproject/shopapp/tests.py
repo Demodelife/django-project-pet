@@ -59,7 +59,7 @@ class ProductDetailViewTestCase(TestCase):
 
 class ProductListViewTestCase(TestCase):
     fixtures = [
-        'product-fixtures.json',
+        'products-fixture.json',
     ]
 
     def test_product_list(self):
