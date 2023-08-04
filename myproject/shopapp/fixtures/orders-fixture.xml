@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+    <object model="shopapp.order" pk="1">
+        <field name="delivery_address" type="CharField">Lucky str 777</field>
+        <field name="promocode" type="CharField">CODELUCK</field>
+        <field name="created_at" type="DateTimeField">2023-07-26T16:03:56.066425+00:00</field>
+        <field name="user" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="products" rel="ManyToManyRel" to="shopapp.product">
+            <object pk="3"></object>
+            <object pk="5"></object>
+        </field>
+    </object>
+    <object model="shopapp.order" pk="2">
+        <field name="delivery_address" type="CharField">Connor str 1989</field>
+        <field name="promocode" type="CharField">IRON000</field>
+        <field name="created_at" type="DateTimeField">2023-07-26T16:06:23.326180+00:00</field>
+        <field name="user" rel="ManyToOneRel" to="auth.user">3</field>
+        <field name="products" rel="ManyToManyRel" to="shopapp.product">
+            <object pk="1"></object>
+            <object pk="4"></object>
+            <object pk="6"></object>
+        </field>
+    </object>
+    <object model="shopapp.order" pk="3">
+        <field name="delivery_address" type="CharField">Devil str 666</field>
+        <field name="promocode" type="CharField">DIABLO666</field>
+        <field name="created_at" type="DateTimeField">2023-07-26T16:06:55.210702+00:00</field>
+        <field name="user" rel="ManyToOneRel" to="auth.user">2</field>
+        <field name="products" rel="ManyToManyRel" to="shopapp.product">
+            <object pk="1"></object>
+            <object pk="3"></object>
+            <object pk="4"></object>
+            <object pk="5"></object>
+        </field>
+    </object>
+</django-objects>

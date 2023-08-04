@@ -21,6 +21,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.i18n import i18n_patterns
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from django.contrib.sitemaps.views import sitemap
+
+from myproject.sitemaps import sitemaps
 
 urlpatterns = i18n_patterns(
 
@@ -29,12 +32,14 @@ urlpatterns = i18n_patterns(
 
     path('shop/', include('shopapp.urls')),
     path('accounts/', include('accounts.urls')),
+    path('blog/', include('blogapp.urls')),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('api/', include('shopapiapp.urls')),
 
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap')
 )
 
 if settings.DEBUG:

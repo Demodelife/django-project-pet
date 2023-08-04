@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 
 def image_path_upload(instance: 'ProductImage', filename: str) -> str:
@@ -22,6 +23,9 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     archived = models.BooleanField(default=False)
     preview = models.ImageField(null=True, blank=True, upload_to=preview_path_upload)
+
+    def get_absolute_url(self):
+        return reverse('shopapp:product-detail', kwargs={'pk': self.pk})
 
 
 class ProductImage(models.Model):

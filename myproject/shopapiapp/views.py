@@ -1,15 +1,18 @@
+from csv import DictWriter
 from django.contrib.auth.models import Group
-from django.shortcuts import render
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.parsers import MultiPartParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from shopapiapp.serializers import GroupSerializer, ProductSerializer, OrderSerializer
+from shopapp.common import save_csv_products, save_csv_orders
 from shopapp.models import Product, Order
 
 
@@ -82,6 +85,43 @@ class ProductViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(*args, **kwargs)
 
+    @action(methods=['get'], detail=False)
+    def download_csv(self, request: Request):
+        response = HttpResponse(content_type='text/csv')
+        filename = 'products-export.csv'
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = [
+            'name',
+            'description',
+            'price',
+            'archived',
+        ]
+        queryset = queryset.only(*fields)
+        writer = DictWriter(response, fieldnames=fields)
+        writer.writeheader()
+
+        for product in queryset:
+            writer.writerow({
+                field: getattr(product, field)
+                for field in fields
+            })
+
+        return response
+
+    @action(
+        methods=['post'],
+        detail=False,
+        parser_classes=[MultiPartParser],
+    )
+    def upload_csv(self, request: Request) -> Response:
+        products = save_csv_products(
+            file=request.FILES['file'].file,
+            encoding=request.encoding
+        )
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data)
+
 
 class OrderViewSet(ModelViewSet):
     """
@@ -109,4 +149,42 @@ class OrderViewSet(ModelViewSet):
         'promocode',
     ]
 
+    @action(methods=['get'], detail=False)
+    def download_csv(self, request: Request) -> HttpResponse:
+        response = HttpResponse(content_type='text/csv')
+        filename = 'orders-export.csv'
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = [
+            'delivery_address',
+            'promocode',
+            'created_at',
+            'user',
+            'products',
+        ]
+        queryset = queryset.only(*fields)
+        writer = DictWriter(response, fieldnames=fields)
+        writer.writeheader()
 
+        for order in queryset:
+            products = order.products.all()
+            writer.writerow({
+                field: getattr(order, field) if field != 'products'
+                else [product.name for product in products]
+                for field in fields
+            })
+
+        return response
+
+    @action(
+        methods=['post'],
+        detail=False,
+        parser_classes=[MultiPartParser]
+    )
+    def upload_csv(self, request: Request) -> Response:
+        orders = save_csv_orders(
+            file=request.FILES['file'].file,
+            encoding=request.encoding
+        )
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data)
