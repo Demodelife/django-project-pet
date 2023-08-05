@@ -1,6 +1,8 @@
 from csv import DictWriter
 from django.contrib.auth.models import Group
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework.decorators import api_view, action
@@ -50,7 +52,7 @@ class ProductViewSet(ModelViewSet):
     """
     Product View set.
     """
-    queryset = Product.objects.all()
+    queryset = Product.objects.order_by('pk').all()
     serializer_class = ProductSerializer
 
     filter_backends = [
@@ -73,6 +75,11 @@ class ProductViewSet(ModelViewSet):
         'description',
         'price',
     ]
+
+    @method_decorator(cache_page(60))
+    def list(self, *args, **kwargs):
+        print('--before cache---')
+        return super().list(*args, **kwargs)
 
     @extend_schema(
         summary='Get one product by ID',
@@ -127,7 +134,7 @@ class OrderViewSet(ModelViewSet):
     """
     Order View set.
     """
-    queryset = Order.objects.all()
+    queryset = Order.objects.order_by('pk').all()
     serializer_class = OrderSerializer
 
     filter_backends = [

@@ -1,12 +1,14 @@
 import logging
+from timeit import default_timer
+from django.core.cache import cache
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.contrib.syndication.views import Feed
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from shopapp.forms import ProductForm, GroupForm
 from shopapp.models import Product, Order, ProductImage
 
@@ -26,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 class ShopIndexView(View):
 
+    # @method_decorator(cache_page(60 * 2))
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
             'products': [
@@ -33,11 +36,13 @@ class ShopIndexView(View):
                 ('Pear', 200),
                 ('Mango', 500),
             ],
+            'time_running': default_timer(),
             'request': request,
             'items': 1,
         }
         logger.debug('Products for shop index: {}'.format(context['products']))
         logger.info('Rendering shop index')
+        print('shop index context', context)
         return render(request, 'shopapp/index.html', context=context)
 
 
@@ -183,17 +188,20 @@ class ProductArchiveView(ProductDeleteView):
 
 class ProductDataExportView(View):
     def get(self, request: HttpRequest) -> JsonResponse:
-        products = Product.objects.order_by('pk').all()
-        products_data = [
-            {
-                'pk': product.pk,
-                'name': product.name,
-                'price': product.price,
-                'archived': product.archived
-            }
-            for product in products
-        ]
-
+        cache_key = 'products_data_export'
+        products_data = cache.get(cache_key)
+        if products_data is None:
+            products = Product.objects.order_by('pk').all()
+            products_data = [
+                {
+                    'pk': product.pk,
+                    'name': product.name,
+                    'price': product.price,
+                    'archived': product.archived
+                }
+                for product in products
+            ]
+            cache.set(cache_key, products_data, 100)
         return JsonResponse({'products': products_data})
 
 

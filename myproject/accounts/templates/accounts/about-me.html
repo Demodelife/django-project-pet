@@ -1,4 +1,5 @@
 {% extends 'accounts/base.html' %}
+{% load cache %}
 
 {% block title %}
     About Me
@@ -7,6 +8,7 @@
 {% block body %}
     {% if user.is_authenticated %}
 
+        {% cache 100 userinfo user.username %}
         <h1>My Profile:</h1>
         <div>
             <p>Name: {{ user.username }}</p>
@@ -14,9 +16,11 @@
             <p>Last Name: {{ user.last_name }}</p>
             <p>Email: {{ user.email }}</p>
             <p>Biography: {{ user.profile.bio }}</p>
+            <p><a href="{% url 'accounts:user-orders' user_id=user.id %}">Go to my orders</a></p>
         </div>
+        {% endcache %}
     {% else %}
         <h1>User is Anonymous</h1>
     {% endif %}
-
+    Random ms: {% now 'u' %}
 {% endblock %}
