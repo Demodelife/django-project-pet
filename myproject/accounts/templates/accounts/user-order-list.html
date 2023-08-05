@@ -1,0 +1,43 @@
+{% extends 'shopapp/base.html' %}
+{% load cache %}
+
+{% block title %}
+    User {{ user.username }} orders
+{% endblock %}
+
+{% block body %}
+    <h1>{{ user.username }} orders</h1>
+    {% if user.orders %}
+        <h3>{% firstof user.first_name user.username %} orders:</h3>
+        {% cache 60 user_orders user.pk %}
+        <div>
+            {% for order in orders %}
+                <p>№ {{ order.pk }}</p>
+
+                    <p>Delivery address: {{ order.delivery_address }}</p>
+                    <p>Promocode: {{ order.promocode }}</p>
+                    <p>Created: {{ order.created_at }}</p>
+
+                Products:
+                <ul>
+                {% for product in order.products.all %}
+                    <div>
+                        <li>Name: {{ product.name }}</li>
+                        <li>Price: {{ product.price }}</li>
+                        ---
+                    </div>
+                {% empty %}
+                    No products in this order.
+                {% endfor %}
+                </ul>
+
+                {% empty %}
+                User has no orders yet.
+            {% endfor %}
+        </div>
+        {% endcache %}
+    {% endif %}
+    <div>
+        <a href="{% url 'accounts:user-orders-export' user_id=user.id %}">Export orders</a>
+    </div>
+{% endblock %}

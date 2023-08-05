@@ -1,13 +1,19 @@
+from random import random
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
+from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _, ngettext
 from django.views import View
-from django.views.generic import TemplateView, CreateView
+from django.views.decorators.cache import cache_page
+from django.views.generic import TemplateView, CreateView, ListView
 from accounts.models import Profile
+from shopapp.models import Order
 
 
 class AboutMeView(TemplateView):
@@ -40,9 +46,10 @@ def set_cookie_view(request: HttpRequest) -> HttpResponse:
     return response
 
 
+@cache_page(60 * 2)
 def get_cookie_view(request: HttpRequest) -> HttpResponse:
     response = request.COOKIES.get('foo', 'default')
-    return HttpResponse(f'Get cookie for key "foo" - {response}')
+    return HttpResponse(f'Get cookie for key "foo" - {response} + {random()}')
 
 
 @permission_required('accounts:view_profile', raise_exception=True)
@@ -83,3 +90,45 @@ class HelloWorld(View):
 
         return HttpResponse(f'<h1>{self.welcome_message}!</h1>'
                             f'\n<h3>{product_line}</h3>')
+
+
+class UserOrdersListView(LoginRequiredMixin, ListView):
+    template_name = 'accounts/user-order-list.html'
+    context_object_name = 'orders'
+    model = Order
+
+    def get_queryset(self):
+        user = self.request.user.pk
+        queryset = Order.objects.filter(user=user).order_by('pk')
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        if kwargs['user_id'] != self.request.user.pk:
+            return HttpResponseRedirect(
+                reverse(
+                    'accounts:user-orders', kwargs={'user_id': self.request.user.id}
+                )
+            )
+        return super().get(request, *args, **kwargs)
+
+
+class UserOrdersDataExport(View):
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> JsonResponse:
+        if self.request.user.id:
+            cache_key = self.request.user.id
+            orders_data = cache.get(cache_key)
+            if orders_data is None:
+                orders = Order.objects.filter(user=self.request.user.id)
+                orders_data = [
+                    {
+                        'delivery_address': order.delivery_address,
+                        'promocode': order.promocode,
+                        'created_at': order.created_at,
+                        'products': [(product.name, product.price) for product in order.products.all()]
+                    }
+                    for order in orders
+                ]
+                cache.set(cache_key, orders_data, 100)
+            return JsonResponse({'orders': orders_data})
+        return JsonResponse({'detail': 'User not found'}, status=404)

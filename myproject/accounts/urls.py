@@ -7,7 +7,7 @@ from accounts.views import (
     set_cookie_view,
     get_cookie_view,
     set_session_view,
-    get_session_view, FooBarView, HelloWorld,
+    get_session_view, FooBarView, HelloWorld, UserOrdersListView, UserOrdersDataExport,
 )
 
 app_name = 'accounts'
@@ -19,6 +19,10 @@ urlpatterns = [
     ), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('about-me/', AboutMeView.as_view(), name='about-me'),
+
+    path('<int:user_id>/orders/', UserOrdersListView.as_view(), name='user-orders'),
+    path('<int:user_id>/orders/export/', UserOrdersDataExport.as_view(), name='user-orders-export'),
+
     path('register/', RegisterView.as_view(), name='register'),
 
     path('set-cookie/', set_cookie_view, name='set_cookie'),

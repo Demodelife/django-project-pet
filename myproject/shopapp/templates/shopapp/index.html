@@ -1,4 +1,6 @@
 {% extends 'shopapp/base.html' %}
+{% load cache %}
+
 
 {% block title %}
     Shop Index
@@ -23,13 +25,18 @@
         <strong>
             You have {{ items }} item{{ items|pluralize }}
             <br>
-            You have {{ items }} class{{ items|pluralize:'es'}}
+            You have {{ items }} class{{ items|pluralize:'es' }}
             <br>
-            You have {{ items }} cherr{{ items|pluralize:'y,ies'}}
+            You have {{ items }} cherr{{ items|pluralize:'y,ies' }}
         </strong>
     </div>
 
     <div>
-        {% lorem 5 p random %}
+        Time running: {{ time_running }}
     </div>
+    {% cache 100 lorem %}
+        <div>
+            {% lorem 5 p random %}
+        </div>
+    {% endcache %}
 {% endblock %}
