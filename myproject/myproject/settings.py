@@ -14,8 +14,10 @@ from pathlib import Path
 import logging.config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from django.urls import reverse_lazy
-
 import sentry_sdk
+from dotenv import load_dotenv
+
+load_dotenv()
 
 sentry_sdk.init(
     dsn="https://37340ae6c21b8ab0363f7a969f0fef34@o4504933656625152.ingest.sentry.io/4505641012822016",
@@ -269,7 +271,7 @@ SPECTACULAR_SETTINGS = {
 # }
 
 
-LOGLEVEL = getenv('DJANGO_LEVEL', 'info').upper()
+LOGLEVEL = getenv('DJANGO_LOGLEVEL', 'info').upper()
 logging.config.dictConfig({
     'version': 1,
     'disable_existing_loggers': False,
