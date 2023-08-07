@@ -5,11 +5,16 @@ services:
   app:
     build:
       dockerfile: ./Dockerfile
-    command:
-      - 'gunicorn'
-      - 'myproject.wsgi:application'
-      - '--bind'
-      - '0.0.0.0:8080'
+    command: >
+      sh -c 'python manage.py migrate &&
+             python manage.py collectstatic &&
+             gunicorn myproject.wsgi:application --bind 0.0.0.0:8080'
+      
+#      - 'gunicorn'
+#      - 'myproject.wsgi:application'
+#      - '--bind'
+#      - '0.0.0.0:8080'
+
 #      - 'python'
 #      - 'manage.py'
 #      - 'runserver'
